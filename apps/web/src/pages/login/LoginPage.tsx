@@ -5,6 +5,16 @@ import { Alert, Box, Button, Container, Link, TextField, Typography } from '@mui
 
 import { trpc } from '../../lib/trpc.js';
 
+const pageBoxSx = {
+  mt: 12,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 3,
+} as const;
+const formBoxSx = { width: '100%', display: 'flex', flexDirection: 'column', gap: 2 } as const;
+const alertSx = { width: '100%' } as const;
+
 interface LoginFormReturn {
   email: string;
   setEmail: Dispatch<SetStateAction<string>>;
@@ -31,34 +41,42 @@ const useLoginForm = (): LoginFormReturn => {
   return { email, setEmail, password, setPassword, error, isPending, handleSubmit };
 };
 
-const LoginForm = ({ form }: { readonly form: LoginFormReturn }): JSX.Element => (
-  <Box
-    component="form"
-    onSubmit={form.handleSubmit}
-    sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}
-  >
-    <TextField
-      label="Email"
-      type="email"
-      value={form.email}
-      onChange={(e) => {
-        form.setEmail(e.target.value);
-      }}
-      required
-      fullWidth
-      autoComplete="email"
-    />
-    <TextField
-      label="Password"
-      type="password"
-      value={form.password}
-      onChange={(e) => {
-        form.setPassword(e.target.value);
-      }}
-      required
-      fullWidth
-      autoComplete="current-password"
-    />
+interface LoginFieldsProps {
+  readonly form: LoginFormReturn;
+}
+
+const LoginEmailField = ({ form }: LoginFieldsProps): JSX.Element => (
+  <TextField
+    label="Email"
+    type="email"
+    value={form.email}
+    onChange={(e) => {
+      form.setEmail(e.target.value);
+    }}
+    required
+    fullWidth
+    autoComplete="email"
+  />
+);
+
+const LoginPasswordField = ({ form }: LoginFieldsProps): JSX.Element => (
+  <TextField
+    label="Password"
+    type="password"
+    value={form.password}
+    onChange={(e) => {
+      form.setPassword(e.target.value);
+    }}
+    required
+    fullWidth
+    autoComplete="current-password"
+  />
+);
+
+const LoginForm = ({ form }: LoginFieldsProps): JSX.Element => (
+  <Box component="form" onSubmit={form.handleSubmit} sx={formBoxSx}>
+    <LoginEmailField form={form} />
+    <LoginPasswordField form={form} />
     <Button type="submit" variant="contained" fullWidth disabled={form.isPending} sx={{ mt: 1 }}>
       {form.isPending ? 'Signing in…' : 'Sign in'}
     </Button>
@@ -69,12 +87,12 @@ export const LoginPage = (): JSX.Element => {
   const form = useLoginForm();
   return (
     <Container maxWidth="xs">
-      <Box sx={{ mt: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+      <Box sx={pageBoxSx}>
         <Typography variant="h4" component="h1">
           Sign in
         </Typography>
         {form.error && (
-          <Alert severity="error" sx={{ width: '100%' }}>
+          <Alert severity="error" sx={alertSx}>
             {form.error.message}
           </Alert>
         )}

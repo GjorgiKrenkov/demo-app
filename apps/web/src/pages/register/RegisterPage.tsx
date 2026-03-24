@@ -5,6 +5,16 @@ import { Alert, Box, Button, Container, Link, TextField, Typography } from '@mui
 
 import { trpc } from '../../lib/trpc.js';
 
+const pageBoxSx = {
+  mt: 12,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 3,
+} as const;
+const formBoxSx = { width: '100%', display: 'flex', flexDirection: 'column', gap: 2 } as const;
+const alertSx = { width: '100%' } as const;
+
 interface RegisterFormReturn {
   name: string;
   setName: Dispatch<SetStateAction<string>>;
@@ -34,23 +44,17 @@ const useRegisterForm = (): RegisterFormReturn => {
   return { name, setName, email, setEmail, password, setPassword, error, isPending, handleSubmit };
 };
 
-const RegisterFields = ({
-  name,
-  setName,
-  email,
-  setEmail,
-  password,
-  setPassword,
-}: Pick<
-  RegisterFormReturn,
-  'name' | 'setName' | 'email' | 'setEmail' | 'password' | 'setPassword'
->): JSX.Element => (
+interface RegisterFieldsProps {
+  readonly form: RegisterFormReturn;
+}
+
+const RegisterFields = ({ form }: RegisterFieldsProps): JSX.Element => (
   <>
     <TextField
       label="Name"
-      value={name}
+      value={form.name}
       onChange={(e) => {
-        setName(e.target.value);
+        form.setName(e.target.value);
       }}
       required
       fullWidth
@@ -59,9 +63,9 @@ const RegisterFields = ({
     <TextField
       label="Email"
       type="email"
-      value={email}
+      value={form.email}
       onChange={(e) => {
-        setEmail(e.target.value);
+        form.setEmail(e.target.value);
       }}
       required
       fullWidth
@@ -70,9 +74,9 @@ const RegisterFields = ({
     <TextField
       label="Password"
       type="password"
-      value={password}
+      value={form.password}
       onChange={(e) => {
-        setPassword(e.target.value);
+        form.setPassword(e.target.value);
       }}
       required
       fullWidth
@@ -83,34 +87,28 @@ const RegisterFields = ({
 );
 
 export const RegisterPage = (): JSX.Element => {
-  const { name, setName, email, setEmail, password, setPassword, error, isPending, handleSubmit } =
-    useRegisterForm();
+  const form = useRegisterForm();
   return (
     <Container maxWidth="xs">
-      <Box sx={{ mt: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+      <Box sx={pageBoxSx}>
         <Typography variant="h4" component="h1">
           Create account
         </Typography>
-        {error && (
-          <Alert severity="error" sx={{ width: '100%' }}>
-            {error.message}
+        {form.error && (
+          <Alert severity="error" sx={alertSx}>
+            {form.error.message}
           </Alert>
         )}
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}
-        >
-          <RegisterFields
-            name={name}
-            setName={setName}
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-          />
-          <Button type="submit" variant="contained" fullWidth disabled={isPending} sx={{ mt: 1 }}>
-            {isPending ? 'Creating account…' : 'Create account'}
+        <Box component="form" onSubmit={form.handleSubmit} sx={formBoxSx}>
+          <RegisterFields form={form} />
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            disabled={form.isPending}
+            sx={{ mt: 1 }}
+          >
+            {form.isPending ? 'Creating account…' : 'Create account'}
           </Button>
         </Box>
         <Typography variant="body2" color="text.secondary">

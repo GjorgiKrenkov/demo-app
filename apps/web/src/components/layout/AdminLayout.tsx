@@ -6,6 +6,9 @@ import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/materi
 import { trpc } from '../../lib/trpc.js';
 import { useAuth } from '../../lib/use-auth.js';
 
+const toolbarSx = { gap: 2 } as const;
+const logoSx = { textDecoration: 'none', color: 'primary.main', flexGrow: 1 } as const;
+
 const useLogout = (): { mutate: () => void } => {
   const navigate = useNavigate();
   const utils = trpc.useUtils();
@@ -20,28 +23,17 @@ const useLogout = (): { mutate: () => void } => {
 
 const AdminAppBar = (): JSX.Element => {
   const { user } = useAuth();
-  const logout = useLogout();
+  const { mutate } = useLogout();
   return (
     <AppBar position="static" color="default" elevation={1}>
-      <Toolbar sx={{ gap: 2 }}>
-        <Typography
-          variant="h6"
-          component={RouterLink}
-          to="/admin"
-          sx={{ textDecoration: 'none', color: 'primary.main', flexGrow: 1 }}
-        >
+      <Toolbar sx={toolbarSx}>
+        <Typography variant="h6" component={RouterLink} to="/admin" sx={logoSx}>
           Admin
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {user?.email}
         </Typography>
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => {
-            logout.mutate();
-          }}
-        >
+        <Button variant="outlined" size="small" onClick={mutate}>
           Logout
         </Button>
       </Toolbar>
