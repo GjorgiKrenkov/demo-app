@@ -1,15 +1,16 @@
 import { z } from 'zod';
+
 import { idSchema, timestampsSchema } from './common.schema.js';
 
 // ── Base fields ────────────────────────────────────────────────────────────
-const emailSchema = z
+export const emailSchema = z
   .string()
   .trim()
   .toLowerCase()
   .email('Must be a valid email address')
   .max(255, 'Email must be at most 255 characters');
 
-const nameSchema = z
+export const nameSchema = z
   .string()
   .trim()
   .min(1, 'Name cannot be empty')
