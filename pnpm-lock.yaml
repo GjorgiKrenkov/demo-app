@@ -215,6 +215,9 @@ importers:
       '@demo-app/config':
         specifier: workspace:*
         version: link:../config
+      '@types/node':
+        specifier: ^22.10.7
+        version: 22.19.15
       drizzle-kit:
         specifier: ^0.30.1
         version: 0.30.6
