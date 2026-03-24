@@ -1,0 +1,36 @@
+name: Branch Protection Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, reopened, ready_for_review]
+
+jobs:
+  branch-naming:
+    name: Validate branch name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name convention
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          PATTERN="^(feat|fix|docs|chore|refactor|perf|test|ci)\/[a-z0-9-]+(\/[a-z0-9-]+)?$"
+          if ! echo "$BRANCH" | grep -qE "$PATTERN"; then
+            echo "::error::Branch name '$BRANCH' does not follow convention."
+            echo "::error::Use: type/short-description (e.g. feat/user-auth, fix/login-bug)"
+            exit 1
+          fi
+          echo "Branch name '$BRANCH' is valid."
+
+  pr-title:
+    name: Validate PR title (Conventional Commits)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z-]+\))?: .+"
+          if ! echo "$TITLE" | grep -qE "$PATTERN"; then
+            echo "::error::PR title does not follow Conventional Commits."
+            echo "::error::Use: type(scope): description  e.g. feat(user): add login endpoint"
+            exit 1
+          fi
