@@ -5,7 +5,7 @@
   "description": "tRPC API server with Fastify + Drizzle/Postgres",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "node --env-file=../../.env --import tsx/esm --watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "lint": "eslint src --max-warnings=0",
@@ -22,6 +22,7 @@
     "@fastify/cors": "^10.0.2",
     "@sentry/node": "^8.42.0",
     "@trpc/server": "^11.0.0",
+    "drizzle-orm": "^0.39.1",
     "fastify": "^5.2.1",
     "fastify-plugin": "^5.0.1",
     "postgres": "^3.4.5",
