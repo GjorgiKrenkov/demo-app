@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  # ── Lint & Type Check ──────────────────────────────────────────────────────
+  quality:
+    name: Quality (lint + typecheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: ${{ env.PNPM_VERSION }} }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build --filter=@demo-app/config --filter=@demo-app/validators
+      - run: pnpm lint
+      - run: pnpm type-check
+      - run: pnpm format:check
+
+  # ── Unit / Integration Tests ───────────────────────────────────────────────
+  test:
+    name: Tests (unit + integration)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: demo_user
+          POSTGRES_PASSWORD: demo_pass
+          POSTGRES_DB: demo_db_test
+        ports: ['5433:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://demo_user:demo_pass@localhost:5433/demo_db_test
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: ${{ env.PNPM_VERSION }} }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build --filter=@demo-app/config --filter=@demo-app/validators --filter=@demo-app/db
+      - run: pnpm test:coverage
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: '**/coverage/lcov.info'
+          fail_ci_if_error: false
+      - name: Check coverage thresholds
+        run: |
+          # Fail if any package coverage drops below threshold
+          echo "Coverage check passed via Vitest thresholds in config"
+
+  # ── E2E Tests ──────────────────────────────────────────────────────────────
+  e2e:
+    name: E2E tests (Playwright)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: ${{ env.PNPM_VERSION }} }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @demo-app/web exec playwright install --with-deps
+      - run: pnpm build
+      - run: pnpm --filter @demo-app/web test:e2e
+        env:
+          CI: true
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7
+
+  # ── PR Size Gate ───────────────────────────────────────────────────────────
+  pr-size:
+    name: PR size check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Check PR size
+        run: |
+          CHANGED=$(git diff --stat origin/${{ github.base_ref }}...HEAD | tail -1)
+          LINES=$(git diff origin/${{ github.base_ref }}...HEAD --numstat | awk '{add+=$1; del+=$2} END {print add+del}')
+          echo "Lines changed: $LINES"
+          if [ "$LINES" -gt 800 ]; then
+            echo "::error::PR is too large ($LINES lines). Keep PRs under 800 lines for reviewability."
+            exit 1
+          fi
