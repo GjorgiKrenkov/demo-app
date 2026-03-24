@@ -1,0 +1,16 @@
+{
+  "name": "@demo-app/config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared configuration for TypeScript, ESLint, Vitest",
+  "exports": {
+    "./tsconfig/base": "./tsconfig.base.json",
+    "./tsconfig/react": "./tsconfig.react.json",
+    "./tsconfig/node": "./tsconfig.node.json",
+    "./vitest/base": "./vitest.base.ts"
+  },
+  "files": ["tsconfig*.json", "vitest.base.ts"],
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
