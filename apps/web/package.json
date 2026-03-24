@@ -19,6 +19,7 @@
     "test:debug": "vitest --reporter=verbose"
   },
   "dependencies": {
+    "@demo-app/api": "workspace:^",
     "@demo-app/ui": "workspace:*",
     "@demo-app/validators": "workspace:*",
     "@emotion/react": "^11.14.0",
