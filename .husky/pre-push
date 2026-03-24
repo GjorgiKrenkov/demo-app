@@ -1,0 +1,11 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Ensure type-check passes before push
+echo "Running type-check before push..."
+pnpm type-check
+
+echo "Running tests before push..."
+pnpm test
+
+echo "✓ Pre-push checks passed"
