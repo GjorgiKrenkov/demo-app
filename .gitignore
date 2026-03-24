@@ -24,8 +24,10 @@ playwright-report
 test-results
 .playwright
 
-# Claude Code (per-developer config)
-.claude/
+# Claude Code — commit shared config, ignore per-developer overrides
+.claude/settings.local.json
+.claude/mcp.json
+.claude/memory/
 
 # IDE
 .vscode/*
