@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { createUserSchema, updateUserSchema, userSchema } from '../schemas/user.schema.js';
+import { describe, expect, it } from 'vitest';
+
+import { createUserSchema, updateUserSchema, userSchema } from '../user.schema.js';
 
 describe('createUserSchema', () => {
   describe('email validation', () => {
@@ -56,7 +57,9 @@ describe('createUserSchema', () => {
     });
 
     it('rejects unknown role', () => {
-      expect(() => createUserSchema.parse({ email: 'a@b.com', name: 'Alice', role: 'superadmin' })).toThrow();
+      expect(() =>
+        createUserSchema.parse({ email: 'a@b.com', name: 'Alice', role: 'superadmin' }),
+      ).toThrow();
     });
   });
 });

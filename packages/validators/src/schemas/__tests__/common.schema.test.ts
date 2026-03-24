@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { paginationQuerySchema, idSchema, apiErrorSchema } from '../schemas/common.schema.js';
+import { describe, expect, it } from 'vitest';
+
+import { apiErrorSchema, idSchema, paginationQuerySchema } from '../common.schema.js';
 
 describe('paginationQuerySchema', () => {
   describe('defaults', () => {
@@ -56,7 +57,11 @@ describe('apiErrorSchema', () => {
   });
 
   it('accepts optional details field', () => {
-    const result = apiErrorSchema.parse({ code: 'BAD_REQUEST', message: 'Invalid', details: { field: 'email' } });
+    const result = apiErrorSchema.parse({
+      code: 'BAD_REQUEST',
+      message: 'Invalid',
+      details: { field: 'email' },
+    });
     expect(result.details).toEqual({ field: 'email' });
   });
 });
