@@ -1,14 +1,16 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { createCallerFactory } from '@trpc/server';
-import { appRouter } from '../router/index.js';
-import { createContext } from '../trpc/context.js';
+import { beforeEach, describe, expect, it } from 'vitest';
+
 import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify';
+
+import type { Context } from '../../trpc/context.js';
+import { createContext } from '../../trpc/context.js';
+import { createCallerFactory } from '../../trpc/init.js';
+import { appRouter } from '../index.js';
 
 // ── Test factory ───────────────────────────────────────────────────────────
 const createCaller = createCallerFactory(appRouter);
 
-const makeMockCtx = () =>
-  createContext({ req: {} as never, res: {} as never } as CreateFastifyContextOptions);
+const makeMockCtx = (): Context => createContext({} as unknown as CreateFastifyContextOptions);
 
 // ── Tests ──────────────────────────────────────────────────────────────────
 describe('userRouter', () => {
@@ -28,9 +30,7 @@ describe('userRouter', () => {
     });
 
     it('rejects invalid email', async () => {
-      await expect(
-        caller.user.create({ email: 'not-an-email', name: 'Test' }),
-      ).rejects.toThrow();
+      await expect(caller.user.create({ email: 'not-an-email', name: 'Test' })).rejects.toThrow();
     });
   });
 

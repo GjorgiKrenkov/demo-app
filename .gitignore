@@ -24,6 +24,9 @@ playwright-report
 test-results
 .playwright
 
+# Claude Code (per-developer config)
+.claude/
+
 # IDE
 .vscode/*
 !.vscode/extensions.json
