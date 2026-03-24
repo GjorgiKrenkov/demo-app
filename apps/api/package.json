@@ -1,0 +1,37 @@
+{
+  "name": "@demo-app/api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "tRPC API server with Fastify + Drizzle/Postgres",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src --max-warnings=0",
+    "lint:fix": "eslint src --fix",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:debug": "vitest --reporter=verbose"
+  },
+  "dependencies": {
+    "@demo-app/db": "workspace:*",
+    "@demo-app/validators": "workspace:*",
+    "@fastify/cors": "^10.0.2",
+    "@sentry/node": "^8.42.0",
+    "@trpc/server": "^11.0.0",
+    "fastify": "^5.2.1",
+    "fastify-plugin": "^5.0.1",
+    "postgres": "^3.4.5",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@demo-app/config": "workspace:*",
+    "@types/node": "^22.10.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  }
+}
