@@ -31,15 +31,16 @@ demo-app/
 
 **ALL** domain types, Zod schemas, and API contracts live in `packages/validators/`.
 
-| Rule | Detail |
-|------|--------|
-| ✅ DO | Import types from `@demo-app/validators` in both frontend AND backend |
-| ✅ DO | Add new domain schemas to `packages/validators/src/schemas/` |
-| ❌ DON'T | Define inline Zod schemas inside `apps/` |
-| ❌ DON'T | Duplicate types between frontend and backend |
-| ❌ DON'T | Use `z.any()` or `as unknown` to bypass validation |
+| Rule     | Detail                                                                |
+| -------- | --------------------------------------------------------------------- |
+| ✅ DO    | Import types from `@demo-app/validators` in both frontend AND backend |
+| ✅ DO    | Add new domain schemas to `packages/validators/src/schemas/`          |
+| ❌ DON'T | Define inline Zod schemas inside `apps/`                              |
+| ❌ DON'T | Duplicate types between frontend and backend                          |
+| ❌ DON'T | Use `z.any()` or `as unknown` to bypass validation                    |
 
 ### Schema file naming
+
 ```
 packages/validators/src/schemas/
   {domain}.schema.ts     # e.g. user.schema.ts, product.schema.ts
@@ -49,20 +50,21 @@ packages/validators/src/schemas/
 
 ## 📁 File Naming Conventions
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| React component | PascalCase + `.tsx` | `UserCard.tsx` |
-| React hook | camelCase prefixed `use` | `useUsers.ts` |
-| tRPC router | camelCase + `.router.ts` | `user.router.ts` |
-| Zod schema file | camelCase + `.schema.ts` | `user.schema.ts` |
-| DB table | camelCase + `.table.ts` | `users.table.ts` |
-| Utility/helper | camelCase + `.ts` | `pagination.ts` |
-| Test file | same name + `.test.ts(x)` | `UserCard.test.tsx` |
-| E2E test file | kebab-case + `.spec.ts` | `user-management.spec.ts` |
-| Type-only file | camelCase + `.types.ts` | `router.types.ts` |
-| Constants | camelCase + `.constants.ts` | `routes.constants.ts` |
+| Type            | Convention                  | Example                   |
+| --------------- | --------------------------- | ------------------------- |
+| React component | PascalCase + `.tsx`         | `UserCard.tsx`            |
+| React hook      | camelCase prefixed `use`    | `useUsers.ts`             |
+| tRPC router     | camelCase + `.router.ts`    | `user.router.ts`          |
+| Zod schema file | camelCase + `.schema.ts`    | `user.schema.ts`          |
+| DB table        | camelCase + `.table.ts`     | `users.table.ts`          |
+| Utility/helper  | camelCase + `.ts`           | `pagination.ts`           |
+| Test file       | same name + `.test.ts(x)`   | `UserCard.test.tsx`       |
+| E2E test file   | kebab-case + `.spec.ts`     | `user-management.spec.ts` |
+| Type-only file  | camelCase + `.types.ts`     | `router.types.ts`         |
+| Constants       | camelCase + `.constants.ts` | `routes.constants.ts`     |
 
 ### Directory structure per feature
+
 ```
 src/
   pages/
@@ -88,24 +90,27 @@ src/
 ## ✅ Test Naming Conventions
 
 ### Unit / Integration (Vitest)
+
 ```typescript
 // File: UserCard.test.tsx
-describe('UserCard', () => {             // component/module name
-  describe('when user is admin', () => { // condition / state
-    it('renders admin badge', () => {    // behaviour: "it [does X]"
+describe('UserCard', () => {
+  // component/module name
+  describe('when user is admin', () => {
+    // condition / state
+    it('renders admin badge', () => {
+      // behaviour: "it [does X]"
     });
-    it('shows delete button', () => {
-    });
+    it('shows delete button', () => {});
   });
 
   describe('when user is viewer', () => {
-    it('hides delete button', () => {
-    });
+    it('hides delete button', () => {});
   });
 });
 ```
 
 ### Router tests (tRPC)
+
 ```typescript
 describe('userRouter', () => {
   describe('create', () => {
@@ -117,6 +122,7 @@ describe('userRouter', () => {
 ```
 
 ### E2E (Playwright)
+
 ```typescript
 // File: user-management.spec.ts
 test.describe('user management', () => {
@@ -126,6 +132,7 @@ test.describe('user management', () => {
 ```
 
 ### Rules
+
 - Test description = **observable behaviour**, not implementation detail
 - Avoid `toBeTruthy()` — use specific matchers (`toBe`, `toEqual`, `toHaveLength`)
 - Every public function needs ≥1 happy-path + ≥1 edge-case test
@@ -137,6 +144,7 @@ test.describe('user management', () => {
 ## 📏 Code Rules (Non-Negotiable)
 
 ### 1. Method length ≤ 20 lines (logic lines)
+
 No function body may exceed 20 lines of logic (blank lines and comments excluded).
 If it does → extract helpers, use early returns, or split into smaller functions.
 
@@ -144,7 +152,9 @@ If it does → extract helpers, use early returns, or split into smaller functio
 // ✅ Good — 4 logic lines
 const getUserById = async (id: string): Promise<User> => {
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id));
-  if (!user) { throw new TRPCError({ code: 'NOT_FOUND' }); }
+  if (!user) {
+    throw new TRPCError({ code: 'NOT_FOUND' });
+  }
   return user;
 };
 
@@ -155,6 +165,7 @@ const processUser = async (id: string, data: unknown) => {
 ```
 
 ### 2. TypeScript — no escape hatches
+
 ```typescript
 // ❌ NEVER
 const x: any = ...
@@ -164,11 +175,13 @@ as unknown as SomeType
 ```
 
 ### 3. Zod for ALL external input
+
 - HTTP request bodies → Zod (via tRPC input schemas)
 - env vars → validate at startup with Zod
 - localStorage / query params → Zod parse before use
 
 ### 4. SOLID principles
+
 - **S** — one file = one responsibility. Routes ≠ business logic ≠ DB queries
 - **O** — extend via new schemas/routers, not by modifying existing ones
 - **L** — component/function contracts must not be broken by subclasses/overrides
@@ -176,11 +189,13 @@ as unknown as SomeType
 - **D** — depend on `@demo-app/validators` abstractions, not concrete DB row types
 
 ### 5. DRY
+
 - Shared logic → `packages/` or `src/lib/`
 - Repeated UI patterns → `packages/ui/src/components/`
 - Repeated API patterns → shared middleware in `apps/api/src/trpc/`
 
 ### 6. No `console.log` in committed code
+
 Use `console.warn` / `console.error` only where intentional (server startup, etc.).
 For debugging → use the VS Code debugger (launch configs provided).
 
@@ -189,6 +204,7 @@ For debugging → use the VS Code debugger (launch configs provided).
 ## 🌿 Branch & PR Convention (Trunk-Based Development)
 
 ### Branch naming
+
 ```
 type/short-description
 type/scope/short-description
@@ -200,6 +216,7 @@ chore/upgrade-drizzle-v2
 ```
 
 ### Trunk-based flow
+
 ```
 main  ← production (protected, no direct push)
   └── develop ← integration branch (protected)
@@ -207,17 +224,19 @@ main  ← production (protected, no direct push)
 ```
 
 ### PR rules
-| Rule | Limit |
-|------|-------|
-| Max open PRs → `develop` | **2** |
-| Max PR diff | **800 lines** |
-| Required approvals | **1** |
-| CI must pass | ✅ always |
-| Coverage must not drop | ✅ always |
+
+| Rule                     | Limit         |
+| ------------------------ | ------------- |
+| Max open PRs → `develop` | **2**         |
+| Max PR diff              | **800 lines** |
+| Required approvals       | **1**         |
+| CI must pass             | ✅ always     |
+| Coverage must not drop   | ✅ always     |
 
 If a feature is > 800 lines → **break it into subtasks** (separate issues + PRs).
 
 ### Commit messages (Conventional Commits)
+
 ```
 feat(user): add email verification endpoint
 fix(auth): prevent token refresh on logout
@@ -225,6 +244,19 @@ test(user-router): add edge cases for duplicate email
 docs(onboarding): update postgres setup steps
 refactor(validators): extract pagination schema to common
 ```
+
+### Atomic commits (non-negotiable)
+
+One commit = one logical change. Never bundle unrelated fixes together.
+
+| Rule                                        | Example                                                               |
+| ------------------------------------------- | --------------------------------------------------------------------- |
+| ✅ One concern per commit                   | `fix(db): add missing drizzle-zod dependency`                         |
+| ✅ Lockfile travels with its dep change     | commit `package.json` + `pnpm-lock.yaml` together                     |
+| ❌ Never mix scopes                         | don't fix a dep AND update a config AND add a migration in one commit |
+| ❌ Never commit "while I'm in here" cleanup | open a separate issue/PR for unrelated improvements                   |
+
+**This applies to AI assistants too.** Claude must plan commits up front, stage files precisely, and never use `git add .` or `git add -A`.
 
 ---
 
@@ -260,6 +292,7 @@ Create `.claude/mcp.json` (gitignored, per-developer) from this template:
 Add `.claude/` to your `.gitignore` (already done).
 
 ### Useful Claude Code commands
+
 ```bash
 # Check what issues are open
 "Show me all open GitHub issues labelled bug"
@@ -305,18 +338,19 @@ pnpm --filter @demo-app/api vitest run src/router/__tests__/user.router.test.ts
 
 All theming lives in `packages/ui/src/theme/`.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `primary.main` | `#C9A84C` | Gold — buttons, links, active states |
-| `primary.light` | `#E8C547` | Gold hover |
-| `primary.dark` | `#A67C2A` | Gold pressed |
-| `background.default` | `#0A0A0A` | Page background (dark) |
-| `background.paper` | `#111111` | Card/surface background |
-| `text.primary` | `#F5E6C8` | Cream — headings, body |
-| `text.secondary` | `#B8A082` | Muted gold-tan — subtitles |
-| `error.main` | `#CF6679` | Red (NOT orange — fixed from design) |
+| Token                | Value     | Usage                                |
+| -------------------- | --------- | ------------------------------------ |
+| `primary.main`       | `#C9A84C` | Gold — buttons, links, active states |
+| `primary.light`      | `#E8C547` | Gold hover                           |
+| `primary.dark`       | `#A67C2A` | Gold pressed                         |
+| `background.default` | `#0A0A0A` | Page background (dark)               |
+| `background.paper`   | `#111111` | Card/surface background              |
+| `text.primary`       | `#F5E6C8` | Cream — headings, body               |
+| `text.secondary`     | `#B8A082` | Muted gold-tan — subtitles           |
+| `error.main`         | `#CF6679` | Red (NOT orange — fixed from design) |
 
 ### Extending the theme
+
 ```typescript
 // ✅ Add new component override in packages/ui/src/theme/dark.theme.ts
 // ✅ Add new token in packages/ui/src/theme/tokens.ts
