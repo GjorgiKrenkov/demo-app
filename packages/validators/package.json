@@ -1,0 +1,26 @@
+{
+  "name": "@demo-app/validators",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared Zod validation schemas and TypeScript types — single source of truth for domain model",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./user": "./src/schemas/user.schema.ts",
+    "./common": "./src/schemas/common.schema.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --max-warnings=0",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@demo-app/config": "workspace:*",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  }
+}
