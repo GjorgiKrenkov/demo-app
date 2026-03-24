@@ -1,10 +1,13 @@
-import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import type { FastifyInstance } from 'fastify';
+import Fastify from 'fastify';
+
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
+
 import { appRouter } from './router/index.js';
 import { createContext } from './trpc/context.js';
 
-export const createApp = async () => {
+export const createApp = async (): Promise<FastifyInstance> => {
   const app = Fastify({ logger: process.env['NODE_ENV'] !== 'test' });
 
   await app.register(cors, {
@@ -17,7 +20,7 @@ export const createApp = async () => {
     trpcOptions: { router: appRouter, createContext },
   });
 
-  app.get('/health', async () => ({ status: 'ok', timestamp: new Date().toISOString() }));
+  app.get('/health', () => ({ status: 'ok', timestamp: new Date().toISOString() }));
 
   return app;
 };
