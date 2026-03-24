@@ -26,7 +26,15 @@ interface TrpcProviderProps {
 export const TrpcProvider = ({ children }: TrpcProviderProps): JSX.Element => {
   const [queryClient] = useState(makeQueryClient);
   const [trpcClient] = useState(() =>
-    trpc.createClient({ links: [httpBatchLink({ url: `${getApiUrl()}/trpc` })] }),
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: `${getApiUrl()}/trpc`,
+          fetch: (url, options) =>
+            fetch(url, Object.assign({}, options, { credentials: 'include' }) as RequestInit),
+        }),
+      ],
+    }),
   );
 
   return (
