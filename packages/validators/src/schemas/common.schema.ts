@@ -10,7 +10,17 @@ export const paginationQuerySchema = z.object({
 
 export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
 
-export const paginatedResultSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+export const paginatedResultSchema = <T extends z.ZodTypeAny>(
+  itemSchema: T,
+): z.ZodObject<{
+  items: z.ZodArray<T>;
+  total: z.ZodNumber;
+  page: z.ZodNumber;
+  limit: z.ZodNumber;
+  totalPages: z.ZodNumber;
+  hasNextPage: z.ZodBoolean;
+  hasPrevPage: z.ZodBoolean;
+}> =>
   z.object({
     items: z.array(itemSchema),
     total: z.number().int().nonnegative(),

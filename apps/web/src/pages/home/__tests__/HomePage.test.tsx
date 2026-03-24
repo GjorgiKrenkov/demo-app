@@ -1,11 +1,14 @@
-import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
 import { MemoryRouter } from 'react-router-dom';
+
 import { AppThemeProvider } from '@demo-app/ui';
+
 import { HomePage } from '../HomePage.js';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
-const renderWithProviders = (ui: React.ReactElement) =>
+const renderWithProviders = (ui: React.ReactElement): ReturnType<typeof render> =>
   render(
     <AppThemeProvider defaultMode="dark">
       <MemoryRouter>{ui}</MemoryRouter>
