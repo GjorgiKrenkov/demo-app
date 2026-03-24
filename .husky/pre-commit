@@ -3,3 +3,7 @@
 
 # Run lint-staged (lint + format only changed files)
 pnpm lint-staged
+
+# Type-check the whole monorepo so TS errors are caught at commit time
+echo "Running type-check..."
+pnpm type-check

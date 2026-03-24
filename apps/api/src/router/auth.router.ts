@@ -1,3 +1,4 @@
+import '@fastify/cookie';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import type { FastifyReply } from 'fastify';

@@ -1,3 +1,5 @@
+import '@fastify/cookie';
+
 import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify';
 
 import type { Database } from '@demo-app/db';
