@@ -20,6 +20,7 @@
   "dependencies": {
     "@demo-app/validators": "workspace:*",
     "drizzle-orm": "^0.39.1",
+    "drizzle-zod": "^0.8.3",
     "postgres": "^3.4.5"
   },
   "devDependencies": {
