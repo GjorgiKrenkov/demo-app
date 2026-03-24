@@ -4,6 +4,10 @@
   "private": true,
   "description": "tRPC API server with Fastify + Drizzle/Postgres",
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./router": "./src/router/index.ts"
+  },
   "scripts": {
     "dev": "node --env-file=../../.env --import tsx/esm --watch src/index.ts",
     "build": "tsc",
