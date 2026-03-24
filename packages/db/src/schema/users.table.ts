@@ -5,7 +5,10 @@ export const usersTable = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   email: text('email').notNull().unique(),
   name: text('name').notNull(),
-  role: text('role', { enum: ['admin', 'member', 'viewer'] }).notNull().default('member'),
+  role: text('role', { enum: ['admin', 'member', 'viewer'] })
+    .notNull()
+    .default('member'),
+  passwordHash: text('password_hash'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

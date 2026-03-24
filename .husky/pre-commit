@@ -1,5 +1,4 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# Run lint-staged (lint + format only changed files)
 pnpm lint-staged
+
+echo "Running type-check..."
+pnpm type-check

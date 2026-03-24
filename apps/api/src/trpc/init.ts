@@ -19,11 +19,21 @@ export const publicProcedure = t.procedure;
 export const middleware = t.middleware;
 export const createCallerFactory = t.createCallerFactory;
 
-const authMiddleware = middleware(({ ctx, next }) => {
+/** Any authenticated user (admin, member, viewer) */
+const authenticatedMiddleware = middleware(({ ctx, next }) => {
   if (!ctx.user) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
   return next({ ctx: { ...ctx, user: ctx.user } });
 });
 
-export const protectedProcedure = t.procedure.use(authMiddleware);
+/** Admin role only */
+const adminMiddleware = middleware(({ ctx, next }) => {
+  if (ctx.user?.role !== 'admin') {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  return next({ ctx: { ...ctx, user: ctx.user } });
+});
+
+export const authenticatedProcedure = t.procedure.use(authenticatedMiddleware);
+export const protectedProcedure = t.procedure.use(adminMiddleware);

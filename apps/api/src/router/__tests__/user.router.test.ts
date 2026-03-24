@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify';
 
-import type { Context } from '../../trpc/context.js';
 import { createContext } from '../../trpc/context.js';
 import { createCallerFactory } from '../../trpc/init.js';
 import { appRouter } from '../index.js';
@@ -10,14 +9,20 @@ import { appRouter } from '../index.js';
 // ── Test factory ───────────────────────────────────────────────────────────
 const createCaller = createCallerFactory(appRouter);
 
-const makeMockCtx = (): Context => createContext({} as unknown as CreateFastifyContextOptions);
+const mockRes = {
+  setCookie: () => mockRes,
+  clearCookie: () => mockRes,
+} as unknown as CreateFastifyContextOptions['res'];
+
+const makeMockCtx = (): ReturnType<typeof createContext> =>
+  createContext({ res: mockRes } as unknown as CreateFastifyContextOptions);
 
 // ── Tests ──────────────────────────────────────────────────────────────────
 describe('userRouter', () => {
   let caller: ReturnType<typeof createCaller>;
 
-  beforeEach(() => {
-    caller = createCaller(makeMockCtx());
+  beforeEach(async () => {
+    caller = createCaller(await makeMockCtx());
   });
 
   describe('create', () => {

@@ -8,5 +8,6 @@
  *   import { userSchema, type User } from '@demo-app/validators';
  *   import { createUserSchema } from '@demo-app/validators/user';
  */
+export * from './schemas/auth.schema.js';
 export * from './schemas/common.schema.js';
 export * from './schemas/user.schema.js';
