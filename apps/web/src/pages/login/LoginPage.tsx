@@ -83,27 +83,31 @@ const LoginForm = ({ form }: LoginFieldsProps): JSX.Element => (
   </Box>
 );
 
+const LoginPageBody = ({ form }: LoginFieldsProps): JSX.Element => (
+  <Box sx={pageBoxSx}>
+    <Typography variant="h4" component="h1">
+      Sign in
+    </Typography>
+    {form.error && (
+      <Alert severity="error" sx={alertSx}>
+        {form.error.message}
+      </Alert>
+    )}
+    <LoginForm form={form} />
+    <Typography variant="body2" color="text.secondary">
+      No account?{' '}
+      <Link component={RouterLink} to="/register">
+        Register
+      </Link>
+    </Typography>
+  </Box>
+);
+
 export const LoginPage = (): JSX.Element => {
   const form = useLoginForm();
   return (
     <Container maxWidth="xs">
-      <Box sx={pageBoxSx}>
-        <Typography variant="h4" component="h1">
-          Sign in
-        </Typography>
-        {form.error && (
-          <Alert severity="error" sx={alertSx}>
-            {form.error.message}
-          </Alert>
-        )}
-        <LoginForm form={form} />
-        <Typography variant="body2" color="text.secondary">
-          No account?{' '}
-          <Link component={RouterLink} to="/register">
-            Register
-          </Link>
-        </Typography>
-      </Box>
+      <LoginPageBody form={form} />
     </Container>
   );
 };

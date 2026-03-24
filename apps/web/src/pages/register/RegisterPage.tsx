@@ -48,76 +48,90 @@ interface RegisterFieldsProps {
   readonly form: RegisterFormReturn;
 }
 
+const RegisterNameField = ({ form }: RegisterFieldsProps): JSX.Element => (
+  <TextField
+    label="Name"
+    value={form.name}
+    onChange={(e) => {
+      form.setName(e.target.value);
+    }}
+    required
+    fullWidth
+    autoComplete="name"
+  />
+);
+
+const RegisterEmailField = ({ form }: RegisterFieldsProps): JSX.Element => (
+  <TextField
+    label="Email"
+    type="email"
+    value={form.email}
+    onChange={(e) => {
+      form.setEmail(e.target.value);
+    }}
+    required
+    fullWidth
+    autoComplete="email"
+  />
+);
+
+const RegisterPasswordField = ({ form }: RegisterFieldsProps): JSX.Element => (
+  <TextField
+    label="Password"
+    type="password"
+    value={form.password}
+    onChange={(e) => {
+      form.setPassword(e.target.value);
+    }}
+    required
+    fullWidth
+    slotProps={{ htmlInput: { minLength: 8 } }}
+    autoComplete="new-password"
+  />
+);
+
 const RegisterFields = ({ form }: RegisterFieldsProps): JSX.Element => (
   <>
-    <TextField
-      label="Name"
-      value={form.name}
-      onChange={(e) => {
-        form.setName(e.target.value);
-      }}
-      required
-      fullWidth
-      autoComplete="name"
-    />
-    <TextField
-      label="Email"
-      type="email"
-      value={form.email}
-      onChange={(e) => {
-        form.setEmail(e.target.value);
-      }}
-      required
-      fullWidth
-      autoComplete="email"
-    />
-    <TextField
-      label="Password"
-      type="password"
-      value={form.password}
-      onChange={(e) => {
-        form.setPassword(e.target.value);
-      }}
-      required
-      fullWidth
-      slotProps={{ htmlInput: { minLength: 8 } }}
-      autoComplete="new-password"
-    />
+    <RegisterNameField form={form} />
+    <RegisterEmailField form={form} />
+    <RegisterPasswordField form={form} />
   </>
+);
+
+const RegisterForm = ({ form }: RegisterFieldsProps): JSX.Element => (
+  <Box component="form" onSubmit={form.handleSubmit} sx={formBoxSx}>
+    <RegisterFields form={form} />
+    <Button type="submit" variant="contained" fullWidth disabled={form.isPending} sx={{ mt: 1 }}>
+      {form.isPending ? 'Creating account…' : 'Create account'}
+    </Button>
+  </Box>
+);
+
+const RegisterPageBody = ({ form }: RegisterFieldsProps): JSX.Element => (
+  <Box sx={pageBoxSx}>
+    <Typography variant="h4" component="h1">
+      Create account
+    </Typography>
+    {form.error && (
+      <Alert severity="error" sx={alertSx}>
+        {form.error.message}
+      </Alert>
+    )}
+    <RegisterForm form={form} />
+    <Typography variant="body2" color="text.secondary">
+      Already have an account?{' '}
+      <Link component={RouterLink} to="/login">
+        Sign in
+      </Link>
+    </Typography>
+  </Box>
 );
 
 export const RegisterPage = (): JSX.Element => {
   const form = useRegisterForm();
   return (
     <Container maxWidth="xs">
-      <Box sx={pageBoxSx}>
-        <Typography variant="h4" component="h1">
-          Create account
-        </Typography>
-        {form.error && (
-          <Alert severity="error" sx={alertSx}>
-            {form.error.message}
-          </Alert>
-        )}
-        <Box component="form" onSubmit={form.handleSubmit} sx={formBoxSx}>
-          <RegisterFields form={form} />
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            disabled={form.isPending}
-            sx={{ mt: 1 }}
-          >
-            {form.isPending ? 'Creating account…' : 'Create account'}
-          </Button>
-        </Box>
-        <Typography variant="body2" color="text.secondary">
-          Already have an account?{' '}
-          <Link component={RouterLink} to="/login">
-            Sign in
-          </Link>
-        </Typography>
-      </Box>
+      <RegisterPageBody form={form} />
     </Container>
   );
 };
